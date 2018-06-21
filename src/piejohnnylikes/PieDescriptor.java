@@ -14,8 +14,13 @@ public class PieDescriptor {
 
 	private PieAttribute pieAttribute;
 
-	public PieDescriptor(PieAttribute pieAttribute, boolean negateExpresion) {
+	public PieDescriptor(PieAttribute pieAttribute) {
 		this.pieAttribute = pieAttribute;
+		this.negateExpression = false;
+	}
+
+	public PieDescriptor(PieAttribute pieAttribute, boolean negateExpresion) {
+		this(pieAttribute);
 		this.negateExpression = negateExpresion;
 	}
 
@@ -71,4 +76,40 @@ public class PieDescriptor {
 		this.pieAttribute = pieAttribute;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (obj == null) {
+			return false;
+		}
+
+		if (obj instanceof PieDescriptor) {
+			PieDescriptor other = (PieDescriptor) obj;
+			return this.isNegateExpression() == other.isNegateExpression()
+					&& this.isParentheses() == other.isParentheses()
+					&& this.getPieAttribute().equals(other.getPieAttribute()) && this.getAnd().equals(other.getAnd())
+					&& this.getOr().equals(other.getOr());
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.getPieAttribute().hashCode() + this.getAnd().hashCode() + this.getOr().hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if (this.isParentheses) {
+			sb.append("[");
+			sb.append(this.getPieAttribute());
+			sb.append("]");
+		}
+		return sb.toString();
+	}
 }
