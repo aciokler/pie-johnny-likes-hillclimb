@@ -1,17 +1,10 @@
 package piejohnnylikes;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import piejohnnylikes.Pie.PieAttribute;
 
-public class PieDescriptor {
+public class PieDescriptor implements PieDescriptorExpression {
 
-	private List<PieDescriptor> and = new LinkedList<>();
-	private List<PieDescriptor> or = new LinkedList<>();
 	private boolean negateExpression = false;
-	private boolean isParentheses = false;
-
 	private PieAttribute pieAttribute;
 
 	public PieDescriptor(PieAttribute pieAttribute) {
@@ -25,31 +18,35 @@ public class PieDescriptor {
 	}
 
 	public PieDescriptor(PieDescriptor descriptor) {
-		this.getAnd().addAll(descriptor.getAnd());
-		this.getOr().addAll(descriptor.getOr());
 		this.setNegateExpression(descriptor.isNegateExpression());
-		this.setParentheses(descriptor.isParentheses());
 		this.setPieAttribute(descriptor.getPieAttribute());
 	}
 
-	public boolean evalExpression() {
+	@Override
+	public PieDescriptorExpression getCopy() {
+		return new PieDescriptor(this);
+	}
+
+	@Override
+	public boolean eval(Pie pie) {
+
+		if (pieAttribute instanceof Pie.Shapes) {
+			return negateExpression ? !pieAttribute.equals(pie.getShape()) : pieAttribute.equals(pie.getShape());
+		} else if (pieAttribute instanceof Pie.CrustSizes) {
+			return negateExpression ? !pieAttribute.equals(pie.getCrustSize())
+					: pieAttribute.equals(pie.getCrustSize());
+		} else if (pieAttribute instanceof Pie.CrustShades) {
+			return negateExpression ? !pieAttribute.equals(pie.getCrustShade())
+					: pieAttribute.equals(pie.getCrustShade());
+		} else if (pieAttribute instanceof Pie.FillingSizes) {
+			return negateExpression ? !pieAttribute.equals(pie.getFillingSize())
+					: pieAttribute.equals(pie.getFillingSize());
+		} else if (pieAttribute instanceof Pie.FillingShades) {
+			return negateExpression ? !pieAttribute.equals(pie.getFillingShade())
+					: pieAttribute.equals(pie.getFillingShade());
+		}
+
 		return false;
-	}
-
-	public List<PieDescriptor> getAnd() {
-		return and;
-	}
-
-	public void setAnd(List<PieDescriptor> and) {
-		this.and = and;
-	}
-
-	public List<PieDescriptor> getOr() {
-		return or;
-	}
-
-	public void setOr(List<PieDescriptor> or) {
-		this.or = or;
 	}
 
 	public boolean isNegateExpression() {
@@ -58,14 +55,6 @@ public class PieDescriptor {
 
 	public void setNegateExpression(boolean negateExpression) {
 		this.negateExpression = negateExpression;
-	}
-
-	public boolean isParentheses() {
-		return isParentheses;
-	}
-
-	public void setParentheses(boolean isParentheses) {
-		this.isParentheses = isParentheses;
 	}
 
 	public PieAttribute getPieAttribute() {
@@ -89,9 +78,7 @@ public class PieDescriptor {
 		if (obj instanceof PieDescriptor) {
 			PieDescriptor other = (PieDescriptor) obj;
 			return this.isNegateExpression() == other.isNegateExpression()
-					&& this.isParentheses() == other.isParentheses()
-					&& this.getPieAttribute().equals(other.getPieAttribute()) && this.getAnd().equals(other.getAnd())
-					&& this.getOr().equals(other.getOr());
+					&& this.getPieAttribute().equals(other.getPieAttribute());
 		}
 
 		return false;
@@ -99,17 +86,12 @@ public class PieDescriptor {
 
 	@Override
 	public int hashCode() {
-		return this.getPieAttribute().hashCode() + this.getAnd().hashCode() + this.getOr().hashCode();
+		return this.getPieAttribute().hashCode();
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		if (this.isParentheses) {
-			sb.append("[");
-			sb.append(this.getPieAttribute());
-			sb.append("]");
-		}
 		return sb.toString();
 	}
 }

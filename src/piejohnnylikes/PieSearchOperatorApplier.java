@@ -8,12 +8,12 @@ public class PieSearchOperatorApplier implements SearchOperatorApplier<PieClassi
 	public PieClassifier applySearchOperator(PieClassifier inState, PieSearchOperator searchOperator) {
 
 		PieClassifier newClassifier = new PieClassifier(inState);
-		switch (searchOperator.getOperation()) {
+
+		switch (searchOperator.getOperator()) {
 		case AND:
-			newClassifier.getDescriptor().getAnd().add(searchOperator.getAttribute());
+			// newClassifier = new PieClassifier();
 			break;
 		case OR:
-			newClassifier.getDescriptor().getOr().add(searchOperator.getAttribute());
 			break;
 		}
 

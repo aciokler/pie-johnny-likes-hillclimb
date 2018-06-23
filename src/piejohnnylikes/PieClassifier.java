@@ -4,10 +4,10 @@ import algorithm.hillclimbsearch.ClassifierState;
 
 public class PieClassifier implements ClassifierState {
 
-	private PieDescriptor descriptor;
+	private PieDescriptorExpression descriptor;
 	private double errorRate = -1.0;
 
-	public PieClassifier(PieDescriptor descriptor) {
+	public PieClassifier(PieDescriptorExpression descriptor) {
 		this.descriptor = descriptor;
 	}
 
@@ -16,10 +16,10 @@ public class PieClassifier implements ClassifierState {
 	}
 
 	public PieClassifier(PieClassifier classifierToCopy) {
-		this.descriptor = new PieDescriptor(classifierToCopy.getDescriptor());
+		this(classifierToCopy.getDescriptor().getCopy());
 	}
 
-	public PieDescriptor getDescriptor() {
+	public PieDescriptorExpression getDescriptor() {
 		return descriptor;
 	}
 

@@ -4,59 +4,94 @@ import java.util.ArrayList;
 import java.util.List;
 
 import algorithm.hillclimbsearch.SearchOperator;
+import piejohnnylikes.Pie.PieAttribute;
 
 public class PieSearchOperator implements SearchOperator {
 
-	private AttributeOperators operation;
+	private AttributeOperators operator;
+	private PieDescriptorExpression expression;
 
-	private PieDescriptor attribute;
-
-	public PieSearchOperator(PieDescriptor attribute, AttributeOperators oper) {
-		this.attribute = attribute;
-		this.operation = oper;
+	public PieSearchOperator(PieDescriptorExpression expression, AttributeOperators operator) {
+		this.expression = expression;
+		this.operator = operator;
 	}
 
 	public static List<PieSearchOperator> getCombinationOfOperators() {
 		List<PieSearchOperator> operators = new ArrayList<>();
-		for (AttributeOperators oper : AttributeOperators.values()) {
-			for (Pie.CrustShades attr : Pie.CrustShades.values()) {
-				operators.add(new PieSearchOperator(new PieDescriptor(attr, false), oper));
-				operators.add(new PieSearchOperator(new PieDescriptor(attr, true), oper));
-			}
-			for (Pie.FillingShades attr : Pie.FillingShades.values()) {
-				operators.add(new PieSearchOperator(new PieDescriptor(attr, false), oper));
-				operators.add(new PieSearchOperator(new PieDescriptor(attr, true), oper));
-			}
-			for (Pie.FillingSizes attr : Pie.FillingSizes.values()) {
-				operators.add(new PieSearchOperator(new PieDescriptor(attr, false), oper));
-				operators.add(new PieSearchOperator(new PieDescriptor(attr, true), oper));
-			}
-			for (Pie.CrustSizes attr : Pie.CrustSizes.values()) {
-				operators.add(new PieSearchOperator(new PieDescriptor(attr, false), oper));
-				operators.add(new PieSearchOperator(new PieDescriptor(attr, true), oper));
-			}
-			for (Pie.Shapes attr : Pie.Shapes.values()) {
-				operators.add(new PieSearchOperator(new PieDescriptor(attr, false), oper));
-				operators.add(new PieSearchOperator(new PieDescriptor(attr, true), oper));
-			}
-		}
+		addSingularExpressions(operators);
+		addCompoundExpressions(operators);
 		return operators;
 	}
 
-	public AttributeOperators getOperation() {
-		return operation;
+	private static void addSingularExpressions(List<PieSearchOperator> operators) {
+		for (AttributeOperators operator : AttributeOperators.values()) {
+			for (Pie.CrustShades attr : Pie.CrustShades.values()) {
+				addSingleCombinationExpressions(attr, operator, operators);
+			}
+			for (Pie.FillingShades attr : Pie.FillingShades.values()) {
+				addSingleCombinationExpressions(attr, operator, operators);
+			}
+			for (Pie.FillingSizes attr : Pie.FillingSizes.values()) {
+				addSingleCombinationExpressions(attr, operator, operators);
+			}
+			for (Pie.CrustSizes attr : Pie.CrustSizes.values()) {
+				addSingleCombinationExpressions(attr, operator, operators);
+			}
+			for (Pie.Shapes attr : Pie.Shapes.values()) {
+				addSingleCombinationExpressions(attr, operator, operators);
+			}
+		}
 	}
 
-	public void setOperation(AttributeOperators operation) {
-		this.operation = operation;
+	private static void addSingleCombinationExpressions(PieAttribute attr, AttributeOperators operator,
+			List<PieSearchOperator> operators) {
+		operators.add(new PieSearchOperator(new PieDescriptor(attr, false), operator));
+		operators.add(new PieSearchOperator(new PieDescriptor(attr, true), operator));
 	}
 
-	public PieDescriptor getAttribute() {
-		return attribute;
+	private static void addCompoundCombinationExpressions(PieAttribute attr, AttributeOperators operator,
+			List<PieSearchOperator> operators) {
+		operators.add(new PieSearchOperator(CompoundPieDescriptor.andWith(new PieDescriptor(attr, false)), operator));
+		operators.add(new PieSearchOperator(CompoundPieDescriptor.orWith(new PieDescriptor(attr, false)), operator));
+		operators.add(new PieSearchOperator(CompoundPieDescriptor.andWith(new PieDescriptor(attr, true)), operator));
+		operators.add(new PieSearchOperator(CompoundPieDescriptor.orWith(new PieDescriptor(attr, true)), operator));
 	}
 
-	public void setAttribute(PieDescriptor attribute) {
-		this.attribute = attribute;
+	private static void addCompoundExpressions(List<PieSearchOperator> operators) {
+
+		for (AttributeOperators operator : AttributeOperators.values()) {
+			for (Pie.CrustShades attr : Pie.CrustShades.values()) {
+				addCompoundCombinationExpressions(attr, operator, operators);
+			}
+			for (Pie.FillingShades attr : Pie.FillingShades.values()) {
+				addCompoundCombinationExpressions(attr, operator, operators);
+			}
+			for (Pie.FillingSizes attr : Pie.FillingSizes.values()) {
+				addCompoundCombinationExpressions(attr, operator, operators);
+			}
+			for (Pie.CrustSizes attr : Pie.CrustSizes.values()) {
+				addCompoundCombinationExpressions(attr, operator, operators);
+			}
+			for (Pie.Shapes attr : Pie.Shapes.values()) {
+				addCompoundCombinationExpressions(attr, operator, operators);
+			}
+		}
+	}
+
+	public PieDescriptorExpression getExpression() {
+		return expression;
+	}
+
+	public void setExpression(PieDescriptorExpression expression) {
+		this.expression = expression;
+	}
+
+	public AttributeOperators getOperator() {
+		return operator;
+	}
+
+	public void setOperator(AttributeOperators operator) {
+		this.operator = operator;
 	}
 
 	public enum AttributeOperators {
