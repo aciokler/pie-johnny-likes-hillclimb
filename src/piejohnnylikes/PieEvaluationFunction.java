@@ -15,7 +15,10 @@ public class PieEvaluationFunction implements EvaluationFunction<PieClassifier, 
 				successfullyClassifiedCount++;
 			}
 		}
-		return 1.00 - (double) successfullyClassifiedCount / (double) trainingSet.size();
+		double errorRate = 1.00 - (double) successfullyClassifiedCount / (double) trainingSet.size();
+		// System.out.println("errorRate: " + errorRate);
+		currentState.setErrorRate(errorRate);
+		return errorRate;
 	}
 
 }

@@ -1,80 +1,31 @@
 package piejohnnylikes;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public class CompoundPieDescriptor implements PieDescriptorExpression {
 
-	private boolean isParentheses = false;
-	private boolean isNegateExpression = false;
-	private List<PieDescriptorExpression> and = new LinkedList<>();
-	private List<PieDescriptorExpression> or = new LinkedList<>();
+	private boolean parentheses = false;
+	private boolean negateExpression = false;
+	private PieDescriptorExpression leftOperand;
+	private PieDescriptorExpression rightOperand;
 	private CompoundOperators operator;
 
-	public CompoundPieDescriptor(boolean isParentheses, boolean isNegateExpression) {
-		this.isParentheses = isParentheses;
-		this.isNegateExpression = isNegateExpression;
+	public CompoundPieDescriptor(boolean parentheses, boolean negateExpression) {
+		this.parentheses = parentheses;
+		this.negateExpression = negateExpression;
 	}
 
 	public CompoundPieDescriptor(CompoundPieDescriptor descriptor) {
+		this(descriptor.isParentheses(), descriptor.isNegateExpression());
+		this.operator = descriptor.getOperator();
+		this.leftOperand = descriptor.getLeftOperand().getCopy();
+		this.rightOperand = descriptor.getRightOperand().getCopy();
+	}
+
+	public CompoundPieDescriptor(PieDescriptorExpression left, PieDescriptorExpression right,
+			CompoundOperators operator) {
 		this(false, false);
-		this.getAnd().addAll(descriptor.getAnd());
-		this.getOr().addAll(descriptor.getOr());
-		this.setParentheses(descriptor.isParentheses());
-	}
-
-	public CompoundPieDescriptor(PieDescriptorExpression expr, CompoundOperators operator) {
-		this(false, false);
-	}
-
-	public static CompoundPieDescriptor andWith(PieDescriptorExpression expr) {
-		CompoundPieDescriptor descriptor = new CompoundPieDescriptor(false, false);
-		descriptor.getAnd().add(expr);
-		return descriptor;
-	}
-
-	public static CompoundPieDescriptor orWith(PieDescriptorExpression expr) {
-		CompoundPieDescriptor descriptor = new CompoundPieDescriptor(false, false);
-		descriptor.getOr().add(expr);
-		return descriptor;
-	}
-
-	public static CompoundPieDescriptor andWith(PieDescriptorExpression expr, PieDescriptorExpression expr2) {
-		CompoundPieDescriptor descriptor = new CompoundPieDescriptor(false, false);
-		descriptor.getAnd().add(expr);
-		descriptor.getAnd().add(expr2);
-		return descriptor;
-	}
-
-	public static CompoundPieDescriptor orWith(PieDescriptorExpression expr, PieDescriptorExpression expr2) {
-		CompoundPieDescriptor descriptor = new CompoundPieDescriptor(false, false);
-		descriptor.getOr().add(expr);
-		descriptor.getOr().add(expr2);
-		return descriptor;
-	}
-
-	public static CompoundPieDescriptor andWithAndNegate(PieDescriptorExpression expr) {
-		CompoundPieDescriptor descriptor = new CompoundPieDescriptor(true, true);
-		descriptor.getAnd().add(expr);
-		return descriptor;
-	}
-
-	public static CompoundPieDescriptor orWithAndNegate(PieDescriptorExpression expr) {
-		CompoundPieDescriptor descriptor = new CompoundPieDescriptor(true, true);
-		descriptor.getOr().add(expr);
-		return descriptor;
-	}
-
-	public static CompoundPieDescriptor andWithAndParentheses(PieDescriptorExpression expr) {
-		CompoundPieDescriptor descriptor = new CompoundPieDescriptor(true, false);
-		descriptor.getAnd().add(expr);
-		return descriptor;
-	}
-
-	public static CompoundPieDescriptor orWithAndParentheses(PieDescriptorExpression expr) {
-		CompoundPieDescriptor descriptor = new CompoundPieDescriptor(true, false);
-		descriptor.getOr().add(expr);
-		return descriptor;
+		this.operator = operator;
+		this.leftOperand = left;
+		this.rightOperand = right;
 	}
 
 	@Override
@@ -84,41 +35,35 @@ public class CompoundPieDescriptor implements PieDescriptorExpression {
 
 	@Override
 	public boolean eval(Pie pie) {
-		boolean value = getAnd().stream().allMatch(p -> p.eval(pie));
-		value = value || getOr().stream().anyMatch(p -> p.eval(pie));
-		return value;
-	}
+		boolean value = false;
+		switch (this.operator) {
+		case AND:
+			value = this.getLeftOperand().eval(pie) && this.getRightOperand().eval(pie);
+			break;
+		case OR:
+			value = this.getLeftOperand().eval(pie) || this.getRightOperand().eval(pie);
+			break;
+		default:
+			throw new UnsupportedOperationException("value: " + this.operator + ", has not been implemented yet!");
+		}
 
-	public List<PieDescriptorExpression> getAnd() {
-		return and;
-	}
-
-	public void setAnd(List<PieDescriptorExpression> and) {
-		this.and = and;
-	}
-
-	public List<PieDescriptorExpression> getOr() {
-		return or;
-	}
-
-	public void setOr(List<PieDescriptorExpression> or) {
-		this.or = or;
+		return this.isNegateExpression() ? !value : value;
 	}
 
 	public boolean isParentheses() {
-		return isParentheses;
+		return parentheses;
 	}
 
-	public void setParentheses(boolean isParentheses) {
-		this.isParentheses = isParentheses;
+	public void setParentheses(boolean parentheses) {
+		this.parentheses = parentheses;
 	}
 
 	public boolean isNegateExpression() {
-		return isNegateExpression;
+		return negateExpression;
 	}
 
-	public void setNegateExpression(boolean isNegateExpression) {
-		this.isNegateExpression = isNegateExpression;
+	public void setNegateExpression(boolean negateExpression) {
+		this.negateExpression = negateExpression;
 	}
 
 	public CompoundOperators getOperator() {
@@ -127,6 +72,22 @@ public class CompoundPieDescriptor implements PieDescriptorExpression {
 
 	public void setOperator(CompoundOperators operator) {
 		this.operator = operator;
+	}
+
+	public PieDescriptorExpression getLeftOperand() {
+		return leftOperand;
+	}
+
+	public void setLeftOperand(PieDescriptorExpression leftOperand) {
+		this.leftOperand = leftOperand;
+	}
+
+	public PieDescriptorExpression getRightOperand() {
+		return rightOperand;
+	}
+
+	public void setRightOperand(PieDescriptorExpression rightOperand) {
+		this.rightOperand = rightOperand;
 	}
 
 	@Override
@@ -141,7 +102,11 @@ public class CompoundPieDescriptor implements PieDescriptorExpression {
 
 		if (obj instanceof CompoundPieDescriptor) {
 			CompoundPieDescriptor other = (CompoundPieDescriptor) obj;
-			return this.getAnd().equals(other.getAnd()) && this.getOr().equals(other.getOr());
+			return this.getOperator().equals(other.getOperator())
+					&& this.getLeftOperand().equals(other.getLeftOperand())
+					&& this.getRightOperand().equals(other.getRightOperand())
+					&& this.isParentheses() == other.isParentheses()
+					&& this.isNegateExpression() == other.isParentheses();
 		}
 
 		return false;
@@ -149,10 +114,43 @@ public class CompoundPieDescriptor implements PieDescriptorExpression {
 
 	@Override
 	public int hashCode() {
-		return this.getAnd().hashCode() + this.getOr().hashCode();
+		return this.getLeftOperand().hashCode() + this.getRightOperand().hashCode() + this.getOperator().hashCode()
+				+ Boolean.valueOf(this.isNegateExpression()).hashCode()
+				+ Boolean.valueOf(this.isParentheses()).hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if (this.isParentheses()) {
+			sb.append(" [");
+			addNegationPart(sb);
+			sb.append("] ");
+		} else {
+			addNegationPart(sb);
+		}
+		return sb.toString();
+	}
+
+	private void addCompoundExpression(StringBuilder sb) {
+		sb.append(this.getLeftOperand().toString())
+				.append(this.getOperator() == CompoundOperators.AND ? " AND " : " OR ")
+				.append(this.getRightOperand().toString());
+	}
+
+	private void addNegationPart(StringBuilder sb) {
+		if (this.isNegateExpression()) {
+			sb.append(" NOT(");
+			addCompoundExpression(sb);
+			sb.append(") ");
+		} else {
+			sb.append(" ");
+			addCompoundExpression(sb);
+			sb.append(" ");
+		}
 	}
 
 	public enum CompoundOperators {
-		AND, OK;
+		AND, OR;
 	}
 }

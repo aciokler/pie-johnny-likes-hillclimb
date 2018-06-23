@@ -92,6 +92,11 @@ public class PieDescriptor implements PieDescriptorExpression {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		if (this.isNegateExpression()) {
+			sb.append(" NOT(").append(this.getPieAttribute().toString()).append(") ");
+		} else {
+			sb.append(" ").append(this.getPieAttribute().toString()).append(" ");
+		}
 		return sb.toString();
 	}
 }

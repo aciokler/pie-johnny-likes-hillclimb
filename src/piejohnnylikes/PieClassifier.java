@@ -58,4 +58,12 @@ public class PieClassifier implements ClassifierState {
 	public int hashCode() {
 		return this.getDescriptor().hashCode();
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("{\n");
+		sb.append("expression: ").append(this.getDescriptor().toString()).append(",\n");
+		sb.append("errorRate: ").append(this.getErrorRate()).append("\n}");
+		return sb.toString();
+	}
 }
