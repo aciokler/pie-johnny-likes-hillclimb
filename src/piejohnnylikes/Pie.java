@@ -122,13 +122,13 @@ public class Pie implements InputElement<Boolean> {
 		Thick {
 			@Override
 			public String toString() {
-				return "CrustSize == Thick";
+				return "Crust.Size == Thick";
 			}
 		},
 		Thin {
 			@Override
 			public String toString() {
-				return "CrustSize == Thin";
+				return "Crust.Size == Thin";
 			}
 		};
 	}
@@ -137,19 +137,19 @@ public class Pie implements InputElement<Boolean> {
 		Gray {
 			@Override
 			public String toString() {
-				return "CrustShade == Gray";
+				return "Crust.Shade == Gray";
 			}
 		},
 		White {
 			@Override
 			public String toString() {
-				return "CrustShade == White";
+				return "Crust.Shade == White";
 			}
 		},
 		Dark {
 			@Override
 			public String toString() {
-				return "CurstShade == Dark";
+				return "Crust.Shade == Dark";
 			}
 		};
 	}
@@ -158,13 +158,13 @@ public class Pie implements InputElement<Boolean> {
 		Thick {
 			@Override
 			public String toString() {
-				return "FillingSize == Thick";
+				return "Filling.Size == Thick";
 			}
 		},
 		Thin {
 			@Override
 			public String toString() {
-				return "FillingSize == Thin";
+				return "Filling.Size == Thin";
 			}
 		};
 	}
@@ -173,19 +173,19 @@ public class Pie implements InputElement<Boolean> {
 		Gray {
 			@Override
 			public String toString() {
-				return "FillingShade == Gray";
+				return "Filling.Shade == Gray";
 			}
 		},
 		White {
 			@Override
 			public String toString() {
-				return "FillingShade == White";
+				return "Filling.Shade == White";
 			}
 		},
 		Dark {
 			@Override
 			public String toString() {
-				return "FillingShade == Dark";
+				return "Filling.Shade == Dark";
 			}
 		};
 	}

@@ -49,6 +49,50 @@ public class PieDescriptor implements PieDescriptorExpression {
 		return false;
 	}
 
+	@Override
+	public boolean contains(PieDescriptorExpression expression) {
+		return this.equals(expression);
+	}
+
+	@Override
+	public boolean containsAnyAttribute(PieDescriptorExpression expression) {
+		if (this.contains(expression)) {
+			return true;
+		}
+
+		if (expression instanceof PieDescriptor) {
+			PieDescriptor desc = (PieDescriptor) expression;
+			return hasAttribute(desc.getPieAttribute());
+		}
+		return false;
+	}
+
+	private boolean hasAttribute(PieAttribute pieAttribute) {
+		// if (pieAttribute instanceof Pie.Shapes && this.pieAttribute
+		// instanceof Pie.Shapes) {
+		// return !negateExpression;
+		// } else if (pieAttribute instanceof Pie.CrustSizes &&
+		// this.pieAttribute instanceof Pie.CrustSizes) {
+		// return !negateExpression;
+		// } else if (pieAttribute instanceof Pie.CrustShades &&
+		// this.pieAttribute instanceof Pie.CrustShades) {
+		// return !negateExpression;
+		// } else if (pieAttribute instanceof Pie.FillingSizes &&
+		// this.pieAttribute instanceof Pie.FillingSizes) {
+		// return !negateExpression;
+		// } else if (pieAttribute instanceof Pie.FillingShades &&
+		// this.pieAttribute instanceof Pie.FillingShades) {
+		// return !negateExpression;
+		// }
+		// return false;
+
+		return (pieAttribute instanceof Pie.Shapes && this.pieAttribute instanceof Pie.Shapes)
+				|| (pieAttribute instanceof Pie.CrustSizes && this.pieAttribute instanceof Pie.CrustSizes)
+				|| (pieAttribute instanceof Pie.CrustShades && this.pieAttribute instanceof Pie.CrustShades)
+				|| (pieAttribute instanceof Pie.FillingSizes && this.pieAttribute instanceof Pie.FillingSizes)
+				|| (pieAttribute instanceof Pie.FillingShades && this.pieAttribute instanceof Pie.FillingShades);
+	}
+
 	public boolean isNegateExpression() {
 		return negateExpression;
 	}

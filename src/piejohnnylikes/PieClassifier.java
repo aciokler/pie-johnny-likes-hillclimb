@@ -47,8 +47,9 @@ public class PieClassifier implements ClassifierState {
 
 		if (obj instanceof PieClassifier) {
 			PieClassifier classifier = (PieClassifier) obj;
-			return (this.getErrorRate() < 0.0 && this.getDescriptor().equals(classifier.getDescriptor()))
-					|| (this.getErrorRate() >= 0.0 && this.getErrorRate() <= classifier.getErrorRate());
+			return (((this.getErrorRate() >= 0.0 && classifier.getErrorRate() >= 0.0)
+					&& this.getErrorRate() <= classifier.getErrorRate())
+					|| (this.getDescriptor().equals(classifier.getDescriptor())));
 		}
 
 		return false;

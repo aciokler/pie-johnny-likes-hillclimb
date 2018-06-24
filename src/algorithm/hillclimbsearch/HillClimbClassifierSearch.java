@@ -32,6 +32,7 @@ public class HillClimbClassifierSearch<STATE extends ClassifierState, OPERATOR e
 		do {
 
 			STATE state = classifiers.remove(0);
+			// System.out.println(state);
 			if (state.equals(finalClassifierState)) {
 				System.out.println("tries: " + numberOfTries);
 				// System.out.println(state);
@@ -43,7 +44,10 @@ public class HillClimbClassifierSearch<STATE extends ClassifierState, OPERATOR e
 			List<STATE> newClassifierStates = new ArrayList<>();
 			for (OPERATOR searchOperator : searchOperators) {
 				STATE newState = operatorApplier.applySearchOperator(state, searchOperator);
-				if (!seenClassifiers.contains(newState)) {
+				if (!seenClassifiers.contains(newState) && !newClassifierStates.contains(newState)
+						&& !classifiers.contains(newState)) {
+					// this is a completely new state, none of the other lists
+					// have it
 					newClassifierStates.add(newState);
 				}
 			}

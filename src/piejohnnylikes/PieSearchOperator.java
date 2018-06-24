@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import algorithm.hillclimbsearch.SearchOperator;
-import piejohnnylikes.CompoundPieDescriptor.CompoundOperators;
 import piejohnnylikes.Pie.PieAttribute;
+import piejohnnylikes.PieDescriptorExpression.CompoundOperators;
 
 public class PieSearchOperator implements SearchOperator {
 
 	private CompoundOperators operator;
 	private PieDescriptorExpression expression;
 
-	public PieSearchOperator(PieDescriptorExpression expression, CompoundOperators operator) {
+	public PieSearchOperator(PieDescriptorExpression expression) {
 		this.expression = expression;
+	}
+
+	public PieSearchOperator(PieDescriptorExpression expression, CompoundOperators operator) {
+		this(expression);
 		this.operator = operator;
 	}
 
@@ -25,29 +29,28 @@ public class PieSearchOperator implements SearchOperator {
 	}
 
 	private static void addSingularExpressions(List<PieSearchOperator> operators) {
-		for (CompoundOperators operator : CompoundOperators.values()) {
-			for (Pie.CrustShades attr : Pie.CrustShades.values()) {
-				addSingleCombinationExpressions(attr, operator, operators);
-			}
-			for (Pie.FillingShades attr : Pie.FillingShades.values()) {
-				addSingleCombinationExpressions(attr, operator, operators);
-			}
-			for (Pie.FillingSizes attr : Pie.FillingSizes.values()) {
-				addSingleCombinationExpressions(attr, operator, operators);
-			}
-			for (Pie.CrustSizes attr : Pie.CrustSizes.values()) {
-				addSingleCombinationExpressions(attr, operator, operators);
-			}
-			for (Pie.Shapes attr : Pie.Shapes.values()) {
-				addSingleCombinationExpressions(attr, operator, operators);
-			}
+		// for (CompoundOperators operator : CompoundOperators.values()) {
+		for (Pie.CrustShades attr : Pie.CrustShades.values()) {
+			addSingleCombinationExpressions(attr, operators);
 		}
+		for (Pie.FillingShades attr : Pie.FillingShades.values()) {
+			addSingleCombinationExpressions(attr, operators);
+		}
+		for (Pie.FillingSizes attr : Pie.FillingSizes.values()) {
+			addSingleCombinationExpressions(attr, operators);
+		}
+		for (Pie.CrustSizes attr : Pie.CrustSizes.values()) {
+			addSingleCombinationExpressions(attr, operators);
+		}
+		for (Pie.Shapes attr : Pie.Shapes.values()) {
+			addSingleCombinationExpressions(attr, operators);
+		}
+		// }
 	}
 
-	private static void addSingleCombinationExpressions(PieAttribute attr, CompoundOperators operator,
-			List<PieSearchOperator> operators) {
-		operators.add(new PieSearchOperator(new PieDescriptor(attr, false), operator));
-		operators.add(new PieSearchOperator(new PieDescriptor(attr, true), operator));
+	private static void addSingleCombinationExpressions(PieAttribute attr, List<PieSearchOperator> operators) {
+		operators.add(new PieSearchOperator(new PieDescriptor(attr, false)));
+		// operators.add(new PieSearchOperator(new PieDescriptor(attr, true)));
 	}
 
 	// private static void addCompoundCombinationExpressions(PieAttribute attr,
