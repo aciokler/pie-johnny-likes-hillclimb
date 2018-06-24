@@ -29,13 +29,16 @@ public class HillClimbClassifierSearch<STATE extends ClassifierState, OPERATOR e
 		int numberOfTries = 0;
 
 		classifiers.add(initialClassifierState);
+		STATE bestStateSoFar = null;
 		do {
 
 			STATE state = classifiers.remove(0);
+			bestStateSoFar = state;
 			// System.out.println(state);
 			if (state.equals(finalClassifierState)) {
 				System.out.println("tries: " + numberOfTries);
-				// System.out.println(state);
+				System.out.println("found classifier? true");
+				System.out.println(state);
 				return state;
 			}
 			seenClassifiers.add(state);
@@ -66,8 +69,10 @@ public class HillClimbClassifierSearch<STATE extends ClassifierState, OPERATOR e
 		} while (!classifiers.isEmpty() && numberOfTries < maxNumberOfTries);
 
 		System.out.println("tries: " + numberOfTries);
+		System.out.println("found classifier? false");
+		System.out.println("best classifier found: " + bestStateSoFar);
 
-		return null;
+		return bestStateSoFar;
 	}
 
 	public static class StateComparator<STATE extends ClassifierState, EVALRET extends Comparable<EVALRET>, CLASSES, INPUT extends InputElement<CLASSES>>

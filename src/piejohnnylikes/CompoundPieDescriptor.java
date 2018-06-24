@@ -87,6 +87,8 @@ public class CompoundPieDescriptor implements PieDescriptorExpression {
 		// this.getOperands().add(expression);
 		// }
 		this.getOperands().add(expression);
+		// simplify();
+		// this.getOperands().add(expression);
 	}
 
 	public void swapOperandAt(int pos, PieDescriptorExpression expression) {
@@ -143,7 +145,7 @@ public class CompoundPieDescriptor implements PieDescriptorExpression {
 			CompoundPieDescriptor other = (CompoundPieDescriptor) obj;
 			return this.getOperator().equals(other.getOperator()) && this.getOperands().equals(other.getOperands())
 					&& this.isParentheses() == other.isParentheses()
-					&& this.isNegateExpression() == other.isParentheses();
+					&& this.isNegateExpression() == other.isNegateExpression();
 		}
 
 		return false;
@@ -191,18 +193,79 @@ public class CompoundPieDescriptor implements PieDescriptorExpression {
 		}
 	}
 
-	//// TODO: implement simplification method using Quine-McCluskey Algorithm
-	//// or similar
+	// TODO: implement simplification method using Quine-McCluskey Algorithm
+	// or similar
+	public void simplify() {
+
+		List<PieDescriptorExpression> tmpList = new LinkedList<>(this.getOperands());
+
+		if (this.getOperator() == CompoundOperators.AND) {
+			for (PieDescriptorExpression expr : tmpList) {
+				if (expr instanceof PieDescriptor) {
+					PieDescriptor expression = (PieDescriptor) expr;
+					if (!expr.isNegateExpression()) {
+						int count = 0;
+						do {
+
+							PieDescriptorExpression foundExpr = this.getOperands().get(count);
+							if (!foundExpr.equals(expression) && foundExpr.containsAnyAttribute(expression)) {
+								this.getOperands().remove(foundExpr);
+							}
+
+						} while (++count < this.getOperands().size());
+					}
+				}
+			}
+		} else {
+			for (PieDescriptorExpression expr : tmpList) {
+				this.getOperands().remove(expr);
+				int count = 0;
+				do {
+
+					PieDescriptorExpression foundExpr = this.getOperands().get(count);
+					if (foundExpr.equals(expr)) {
+						this.getOperands().remove(foundExpr);
+					}
+
+				} while (++count < this.getOperands().size());
+				this.getOperands().add(expr);
+			}
+		}
+	}
+
+	// public static void main(String[] args) {
 	//
-	// public void simplify() {
+	// CompoundPieDescriptor comp1 = new CompoundPieDescriptor(new
+	// PieDescriptor(Shapes.CIRCLE),
+	// new PieDescriptor(FillingShades.Dark), CompoundOperators.AND);
+	// comp1.addOperand(new PieDescriptor(CrustShades.White));
 	//
-	// if (this.getOperator() == CompoundOperators.OR) {
-	// for (PieDescriptorExpression expr : this.getOperands()) {
-	// if (expr instanceof PieDescriptor) {
-	// PieDescriptor expression = (PieDescriptor) expr;
+	// CompoundPieDescriptor comp2 = new CompoundPieDescriptor(new
+	// PieDescriptor(CrustShades.Dark),
+	// new PieDescriptor(Shapes.CIRCLE, true), CompoundOperators.AND);
 	//
-	// }
-	// }
-	// }
+	// CompoundPieDescriptor comp3 = new CompoundPieDescriptor(new
+	// PieDescriptor(CrustShades.Gray),
+	// new PieDescriptor(Shapes.TRIANGLE, true), CompoundOperators.AND);
+	// CompoundPieDescriptor comp4 = new CompoundPieDescriptor(new
+	// PieDescriptor(CrustShades.Gray),
+	// new PieDescriptor(Shapes.TRIANGLE, true), CompoundOperators.AND);
+	// CompoundPieDescriptor comp5 = new CompoundPieDescriptor(new
+	// PieDescriptor(CrustShades.Gray),
+	// new PieDescriptor(Shapes.TRIANGLE, true), CompoundOperators.AND);
+	// CompoundPieDescriptor comp6 = new CompoundPieDescriptor(new
+	// PieDescriptor(CrustShades.Gray),
+	// new PieDescriptor(Shapes.TRIANGLE, true), CompoundOperators.AND);
+	//
+	// CompoundPieDescriptor compOR = new CompoundPieDescriptor(comp1, comp2,
+	// CompoundOperators.OR);
+	// compOR.addOperand(comp3);
+	// compOR.addOperand(comp4);
+	// compOR.addOperand(comp5);
+	// compOR.addOperand(comp6);
+	//
+	// System.out.println(compOR);
+	// compOR.simplify();
+	// System.err.println(compOR);
 	// }
 }

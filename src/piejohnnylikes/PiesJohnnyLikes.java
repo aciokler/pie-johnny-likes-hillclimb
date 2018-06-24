@@ -2,7 +2,9 @@ package piejohnnylikes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+import algorithm.hillclimbsearch.ClassifierPerformanceTester;
 import algorithm.hillclimbsearch.HillClimbClassifierSearch;
 import piejohnnylikes.Pie.CrustShades;
 import piejohnnylikes.Pie.CrustSizes;
@@ -14,7 +16,8 @@ public class PiesJohnnyLikes {
 
 	public static void main(String[] args) {
 
-		List<Pie> trainingSet = generateTrainingSet();
+		List<Pie> trainingSet = generateRandomTrainingSet(30, 0.4);
+		// List<Pie> trainingSet = generateTrainingSet();
 
 		PieClassifier initialClassifier = new PieClassifier(new PieDescriptor(Shapes.CIRCLE));
 		PieClassifier finalClassifier = new PieClassifier(0.05);
@@ -24,10 +27,22 @@ public class PiesJohnnyLikes {
 				new PieSearchOperatorApplier());
 
 		PieClassifier foundClassifier = search.findClassifier(initialClassifier, finalClassifier, trainingSet, 1000);
-		System.out.println("found classifier? " + (foundClassifier != null));
-		if (foundClassifier != null) {
-			System.out.println(foundClassifier);
-		}
+
+		ClassifierPerformanceTester<PieClassifier, Boolean, Double, Pie> tester = new ClassifierPerformanceTester<PieClassifier, Boolean, Double, Pie>() {
+			@Override
+			protected List<Pie> listProducerCopy(List<Pie> original) {
+				return new ArrayList<>(original);
+			}
+
+			@Override
+			protected List<Pie> listProducer() {
+				return new ArrayList<>();
+			}
+		};
+
+		Double errorRate = tester.test(foundClassifier, trainingSet, new PieEvaluationFunction(), 0.5);
+
+		System.out.println("test error rate: " + errorRate);
 	}
 
 	private static List<Pie> generateTrainingSet() {
@@ -60,6 +75,33 @@ public class PiesJohnnyLikes {
 				false));
 		pies.add(new Pie(Shapes.TRIANGLE, CrustSizes.Thick, CrustShades.White, FillingSizes.Thick, FillingShades.Gray,
 				false));
+
+		return pies;
+	}
+
+	private static List<Pie> generateRandomTrainingSet(int numberOfExamples, double negativePercent) {
+		List<Pie> pies = new ArrayList<>();
+
+		Random rand = new Random();
+
+		long negativeExamples = Math.round((double) numberOfExamples * negativePercent);
+
+		// Johnny likes
+		for (int i = 0; i < numberOfExamples - negativeExamples; i++) {
+			pies.add(new Pie(Shapes.values()[rand.nextInt(Shapes.values().length)],
+					CrustSizes.values()[rand.nextInt(CrustSizes.values().length)],
+					CrustShades.values()[rand.nextInt(CrustShades.values().length)],
+					FillingSizes.values()[rand.nextInt(FillingSizes.values().length)],
+					FillingShades.values()[rand.nextInt(FillingShades.values().length)], true));
+		}
+
+		for (int i = 0; i < negativeExamples; i++) {
+			pies.add(new Pie(Shapes.values()[rand.nextInt(Shapes.values().length)],
+					CrustSizes.values()[rand.nextInt(CrustSizes.values().length)],
+					CrustShades.values()[rand.nextInt(CrustShades.values().length)],
+					FillingSizes.values()[rand.nextInt(FillingSizes.values().length)],
+					FillingShades.values()[rand.nextInt(FillingShades.values().length)], false));
+		}
 
 		return pies;
 	}
